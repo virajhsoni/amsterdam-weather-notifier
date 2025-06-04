@@ -1,0 +1,27 @@
+name: Daily Weather Notification
+
+on:
+  schedule:
+    - cron: "0 7 * * *"  # Runs at 7:00 UTC = 9:00 AM Amsterdam
+  workflow_dispatch:     # Allows manual trigger from the GitHub UI
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run weather notifier script
+        env:
+          PUSHBULLET_TOKEN: ${{ secrets.PUSHBULLET_TOKEN }}
+        run: python .github/scripts/weather_notifier.py
